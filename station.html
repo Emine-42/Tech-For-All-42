@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>42 | Station d'Accès Sécurisée</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #0b0f19;
+            font-family: 'futura-pt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #f1f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(circle at 50% 30%, rgba(0, 186, 188, 0.08) 0%, transparent 60%);
+        }
+        .card {
+            background: #131b2a;
+            border: 1px solid #223049;
+            border-top: 4px solid #00babc;
+            border-radius: 12px;
+            padding: 35px 30px;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .badge-42 {
+            background: #00babc;
+            color: #042b2b;
+            font-weight: 800;
+            font-size: 1.15rem;
+            padding: 4px 14px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+        h1 { font-size: 1.35rem; margin-bottom: 8px; color: #fff; font-weight: 700; }
+        p.sub { font-size: 0.88rem; color: #94a3b8; margin-bottom: 25px; }
+        .form-group { text-align: left; margin-bottom: 16px; }
+        label { display: block; font-size: 0.82rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            background: #090e1a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            font-family: 'JetBrains Mono', monospace;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #00babc;
+        }
+        .btn-login {
+            width: 100%;
+            background: #00babc;
+            color: #042b2b;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: 'futura-pt', sans-serif;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-login:hover { background: #009ea0; transform: translateY(-1px); }
+        .notice { font-size: 0.78rem; color: #64748b; margin-top: 22px; font-family: monospace; }
+        .alert-error {
+            display: none;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <span class="badge-42">42</span>
+        <h1>Station d'Accès Sécurisée</h1>
+        <p class="sub">Authentification requise pour débloquer le terminal</p>
+
+        <div class="alert-error" id="error-msg">
+            ❌ Accès non autorisé. Avez-vous inspecté les entrailles de la page ?
+        </div>
+
+        <form id="login-form" onsubmit="handleLogin(event)">
+            <input type="hidden" id="auth_token" name="auth_token" value="WEB-INSPECTOR-42">
+
+            <div class="form-group">
+                <label for="username">Identifiant Étudiant</label>
+                <input type="text" id="username" placeholder="ex: etudiant_42" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" placeholder="••••••••••••" autocomplete="off">
+            </div>
+
+            <button type="submit" class="btn-login">Se Connecter au Portail</button>
+        </form>
+
+        <p class="notice">Station sécurisée v2.4 // École 42 (Node: Paris-Auth-01)</p>
+    </div>
+
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+            document.getElementById('error-msg').style.display = 'block';
+        }
+        console.log("🔒 [42 SECURITY] Session initialisée.");
+        console.log("💡 [DIAGNOSTIC] Un paramètre d'autorisation (auth_token) a été injecté dans la structure de la page.");
+    </script>
+</body>
+</html>
+
