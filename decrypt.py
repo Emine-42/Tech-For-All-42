@@ -21,14 +21,11 @@ for decalage in range(1, 26):
             # À COMPLÉTER :
             # 1. Calcule la nouvelle position en reculant de 'decalage' (modulo 26)
             # 2. Reconvertis ce code en caractère avec chr(...)
-            # ------------------------------------------------------------------
-            position = (ord(lettre) - ord('A') - decalage) % 26
-            lettre_decalee = chr(position + ord('A'))
-            
-            resultat += lettre_decalee
+            # ------------------------------------------------------------------            
+            print("--- CONDITION SI ---")
         else:
             # On conserve les caractères spéciaux (chiffres, _, :, /, etc.) intacts
-            resultat += lettre
+            print("--- CONDITION SINON ---")
 
     print(f"Clé {decalage:02d} : {resultat}")
 

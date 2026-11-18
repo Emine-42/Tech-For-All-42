@@ -46,7 +46,7 @@ lvl2_html = """<p class="desc">Le premier code a déverrouillé l'accès à la <
 <ul class="step-list">
     <li>Cliquez sur le lien ci-dessus pour ouvrir la page <code class="inline">station.html</code>.</li>
     <li>Appuyez sur <code class="inline">F12</code> (ou clic droit &gt; <em>Inspecter</em>) pour explorer la page.</li>
-    <li><strong>Masque de la clé recherchée :</strong> <code class="inline" style="letter-spacing: 2px; font-weight: 700; color: #b91c1c;">W***-INS*****-*2</code></li>
+    <li><strong>Masque de la clé recherchée :</strong> <code class="inline" style="letter-spacing: 2px; font-weight: 700; color: #b91c1c;">W**-*NS******-**</code></li>
     <li><em>Attention aux pièges :</em> plusieurs clés leurres au même format sont dissimulées sur la page. Seul le jeton d'autorisation officiel placé dans le formulaire de connexion est valide.</li>
     <li>Une fois la clé identifiée, copiez-la et collez-la ci-dessous pour valider l'Étoile 2 !</li>
 </ul>
@@ -64,9 +64,9 @@ lvl2_html = """<p class="desc">Le premier code a déverrouillé l'accès à la <
     <div class="validation-header">
         <span class="validation-title">🔑 Validation du Niveau 2</span>
     </div>
-    <p class="validation-hint">Entrez le jeton secret correspondant au format <code class="inline">W***-INS*****-*2</code> :</p>
+    <p class="validation-hint">Entrez le jeton secret correspondant au format <code class="inline">W**-*NS******-**</code> :</p>
     <div class="validation-form">
-        <input type="text" class="validation-input" id="input-level-2" placeholder="Entrez le jeton secret (format W***-INS*****-*2)..." autocomplete="off">
+        <input type="text" class="validation-input" id="input-level-2" placeholder="Entrez le jeton secret (format W**-*NS******-**)..." autocomplete="off">
         <button class="validate-btn" onclick="validateLevel2()">Valider l'Étoile 2 ⭐⭐</button>
     </div>
     <div class="feedback-msg" id="feedback-level-2"></div>
@@ -103,14 +103,10 @@ message_secret = <span class="code-highlight">"42_PDFKLQH_D_VRXV"</span>
             # ord(lettre) donne le code ASCII (A=65, B=66...)
             # chr(...) reconvertit le nombre calculé en lettre majuscule
             # ------------------------------------------------------------------</span>
-            position = (ord(lettre) - ord('A') - decalage) % 26
-            lettre_decalee = chr(position + ord('A'))
-            
-            resultat += lettre_decalee
+            ...
         <span class="code-keyword">else</span>:
             <span class="code-comment"># Si c'est un symbole (chiffres, _, :, /, etc.), on le conserve intact</span>
-            resultat += lettre
-
+            ...
     print(f"Clé {decalage:02d} : {resultat}")</pre>
 </div>
 
@@ -194,19 +190,14 @@ print("🎰 BIENVENUE AU CASINO DE 42 🎰")
     # À COMPLÉTER : RÈGLES DE GAINS STRICTES
     # --------------------------------------------------------------------------</span>
     
-    <span class="code-comment"># 1. Jackpot : 3 symboles identiques (Mot requis : JACKPOT)</span>
-    <span class="code-keyword">if</span> r1 == r2 <span class="code-keyword">and</span> r2 == r3:
-        print("🎉 JACKPOT ! 3 symboles identiques (+50 crédits)")
-        credits += 50
+    <span class="code-comment"># CAS 1 : 3 symboles identiques (Jackpot !)</span>
+    ...
 
-    <span class="code-comment"># 2. Paire : Au moins 2 symboles identiques (Mot requis : PAIRE)</span>
-    <span class="code-keyword">elif</span> r1 == r2 <span class="code-keyword">or</span> r1 == r3 <span class="code-keyword">or</span> r2 == r3:
-        print("✨ PAIRE ! 2 symboles identiques (+15 crédits)")
-        credits += 15
+    <span class="code-comment"># CAS 2 : Au moins 2 symboles identiques (Paire)</span>
+    ...
 
-    <span class="code-comment"># 3. Aucun symbole identique (Mot requis : PERDU)</span>
-    <span class="code-keyword">else</span>:
-        print("😢 PERDU ! Aucun symbole identique.")
+    <span class="code-comment"># CAS 3 : Aucun symbole identique (Perdu)</span>
+    ...
 
 print("\\n💀 Game Over ! Tu n'as plus assez de crédits.")</pre>
 </div>
@@ -1412,10 +1403,10 @@ html_template = f"""<!DOCTYPE html>
                 <p class="desc">Un dossier nommé <code class="inline">mission_42</code> a été préparé sur votre machine. Votre premier objectif est de fouiller le dossier <code class="inline">mission_42/archives</code> pour retrouver la <strong>clé de sécurité système</strong> permettant de débloquer le Niveau 2.</p>
 
                 <ul class="step-list">
-                    <li>Ouvrez votre terminal avec le raccourci clavier <code class="inline">Ctrl + Alt + T</code>.</li>
-                    <li>Rendez-vous dans le dossier de mission : <code class="inline">cd ~/Bureau/mission_42</code> (ou <code class="inline">cd ~/Desktop/mission_42</code>).</li>
-                    <li>Fouillez l'arborescence du dossier <code class="inline">archives</code> à l'aide des commandes de navigation de votre boîte à outils.</li>
-                    <li>Quand vous trouvez un fichier système suspect, affichez son contenu avec <code class="inline">cat</code> pour récupérer la clé.</li>
+                    <li>Ouvrez votre terminal avec le raccourci clavier.</li>
+                    <li>Rendez-vous dans le dossier <code class="inline">~/Desktop/mission_42</code>.</li>
+                    <li>Fouillez l'arborescence du dossier à l'aide des commandes de navigation de votre boîte à outils.</li>
+                    <li>Récupérez la clé de sécurité et validez le niveau.</li>
                 </ul>
 
                 <!-- WIDGET D'INDICE (MODE COLLÈGE / LYCÉE) -->
@@ -2092,7 +2083,7 @@ html_template = f"""<!DOCTYPE html>
                 updateProgressUI(3);
                 scrollToCard('card-level-3');
             }} else {{
-                showFeedback(2, false, "Jeton incorrect. Inspectez attentivement le formulaire de station.html pour trouver la clé au format W***-INS*****-*2.");
+                showFeedback(2, false, "Jeton incorrect. Inspectez attentivement le formulaire de station.html pour trouver la clé au format W**-*NS******-**.");
                 playAudioTone(220, 0.3, 'sawtooth');
             }}
         }}

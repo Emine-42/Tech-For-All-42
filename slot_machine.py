@@ -37,18 +37,13 @@ while credits >= 10:
     # --------------------------------------------------------------------------
 
     # CAS 1 : 3 symboles identiques (Jackpot !)
-    if r1 == r2 and r2 == r3:
-        print("🎉 JACKPOT ! 3 symboles identiques (+50 crédits)")
-        credits += 50
+    ...
 
     # CAS 2 : Au moins 2 symboles identiques (Paire)
-    elif r1 == r2 or r1 == r3 or r2 == r3:
-        print("✨ PAIRE ! 2 symboles identiques (+15 crédits)")
-        credits += 15
+    ...
 
     # CAS 3 : Aucun symbole identique (Perdu)
-    else:
-        print("😢 PERDU ! Aucun symbole identique.")
+    ...
 
 print("\n💀 Game Over ! Tu n'as plus assez de crédits.")
 
