@@ -15,9 +15,9 @@ git clone git@github.com:Emine-42/Tech-For-All-42.git
 cd Tech-For-All-42
 ./setup_mission.sh
 ```
-*(Cela crée automatiquement le dossier `~/Bureau/mission_42` sur le bureau avec l'arborescence complète d'archives, les anecdotes historiques 42, les leurres et la moulinette).*
+*(Cela crée automatiquement le dossier `~/Bureau/mission_42` sur le bureau avec l'arborescence complète d'archives, les anecdotes historiques 42 et les leurres).*
 
-> 💡 **Apparition dynamique des scripts** : Initialement, `decrypt.py` et `slot_machine.py` ne sont **pas** visibles. `decrypt.py` apparaît automatiquement dès que le Niveau 2 est validé, et `slot_machine.py` apparaît dès que le Niveau 3 est validé !
+> 💡 **Apparition dynamique et isolation totale des scripts** : Initialement, **aucun script Python ni template** ne se trouve dans `mission_42` (les fichiers sont conservés hors de portée dans `~/.local/share/42_mission_templates/`). `decrypt.py` apparaît lors de la validation du Niveau 2, puis `slot_machine.py` et `moulinette.py` apparaissent lors de la validation du Niveau 3 ! En cas de réinitialisation, ils sont automatiquement nettoyés.
 
 ### Étape 2 : Lancer le serveur sur la machine de l'animateur
 Sur votre poste organisateur (connecté au même réseau local Wi-Fi ou Ethernet que les élèves) :
@@ -53,7 +53,7 @@ Le serveur central contrôle le niveau d'accompagnement pour **toute la salle en
 | Mode | Public Cible | Caractéristiques |
 | :--- | :--- | :--- |
 | **🎓 Mode Lycée (Intermédiaire)**<br>*(Par défaut)* | Lycéens (STD, Général, Pro) | **Esprit 42 pur** : Aucun bouton d'indice. Les élèves doivent s'entraider entre pairs et chercher par eux-mêmes. Pas de notion de score, focus sur les 5 étoiles et le chrono. |
-| **🎒 Mode Collège (Facile)** | Collégiens / Débutants complets | **Accompagné & Équilibré** :<br>• **Indice 1 (-50 pts)** : Double les chances sans donner la réponse directe (chemin exact, syntaxe, élimination des leurres).<br>• **Indice 2 (0 pt)** : 100% de chances de réussir (solution/code direct).<br>Jauge de score globale sur 500 points. |
+| **🎒 Mode Collège (Facile)** | Collégiens / Débutants complets | **Accompagné & Équilibré** :<br>• **Indice 1 (-50 pts)** : Double les chances sans donner la réponse directe (chemin exact, syntaxe, élimination des leurres).<br>• **Indice 2 (0 pt)** : Donne la réponse concrète à l'exercice pour obtenir la clé (commande exacte `cat`, arborescence inspecteur, code à compléter) sans donner la clé brute sur un plateau.<br>Jauge de score globale sur 500 points. |
 
 ### 3 façons de changer le mode pour toute la salle :
 1. **Dans le terminal de l'animateur** : Tapez simplement `m` puis `Entrée` dans la console de `server.py`.

@@ -40,27 +40,27 @@ mode_lock = threading.Lock()
 
 # Banque d'indices équilibrée (réservée au serveur, invisible côté client)
 # - Indice 1 (-50 pts) : Multiplie par 2 les chances sans donner la réponse directe.
-# - Indice 2 (0 pt)    : 100% de chances de réussir (solution/code direct).
+# - Indice 2 (0 pt)    : Donne la RÉPONSE À L'EXERCICE qui débloque la clé (et non la clé directement).
 SERVER_HINTS = {
     1: {
-        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Concentrez vos recherches dans le dossier <code>archives/2023/configs/</code> ! Sous Linux, les fichiers cachés commencent par un point <code>.</code>. Utilisez la commande <code>ls -la</code> pour révéler les fichiers masqués, puis affichez leur contenu avec <code>cat</code>.",
-        2: "🚨 <strong>Solution directe (0 pt) :</strong> Le fichier secret est <code>.htaccess</code> situé dans <code>archives/2023/configs/</code>. Affichez-le avec la commande :<br><code>cat archives/2023/configs/.htaccess</code><br>La clé secrète à copier-coller est : <code>BASH-EXPLORER-42</code>"
+        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Concentrez vos recherches dans le sous-dossier <code>archives/2023/configs/</code> ! Sous Linux, les fichiers cachés commencent par un point <code>.</code>. Utilisez la commande <code>ls -la</code> pour révéler les fichiers masqués, puis affichez leur contenu avec <code>cat</code>.",
+        2: "🚨 <strong>Solution de l'épreuve (0 pt) :</strong> Le fichier secret est le fichier masqué <code>.htaccess</code> situé dans le sous-dossier <code>archives/2023/configs/</code>.<br>Exécutez cette commande exacte dans votre terminal pour afficher le fichier et y lire la clé secrète :<br><code>cat archives/2023/configs/.htaccess</code>"
     },
     2: {
         1: "💡 <strong>Indice 1 (-50 pts) :</strong> Ne cherchez pas dans les commentaires ou balises secondaires : inspectez directement le formulaire <code>&lt;form id=\"login-form\"&gt;</code> ! Un champ masqué <code>&lt;input type=\"hidden\"&gt;</code> nommé <code>auth_token</code> y est dissimulé.",
-        2: "🚨 <strong>Solution directe (0 pt) :</strong> Dans l'Inspecteur d'éléments (<kbd>F12</kbd>), développez <code>&lt;form id=\"login-form\"&gt;</code>. Le champ masqué contient <code>value=\"WEB-INSPECTOR-42\"</code>. La clé secrète à copier-coller est : <code>WEB-INSPECTOR-42</code>"
+        2: "🚨 <strong>Solution de l'épreuve (0 pt) :</strong> Ouvrez la page <code>station.html</code> et appuyez sur <kbd>F12</kbd> (Inspecteur d'éléments).<br>Dans l'onglet Éléments, dépliez la balise <code>&lt;form id=\"login-form\"&gt;</code>.<br>Repérez le champ masqué <code>&lt;input type=\"hidden\" id=\"auth_token\" value=\"...\"&gt;</code> : la valeur exacte de l'attribut <code>value</code> est la clé secrète à copier !"
     },
     3: {
         1: "💡 <strong>Indice 1 (-50 pts) :</strong> La formule Python pour reculer d'un décalage dans l'alphabet est :<br><code>pos = (ord(lettre) - ord('A') - decalage) % 26</code> puis <code>chr(pos + ord('A'))</code>.<br>De plus, la bonne clé est comprise entre <strong>1 et 5</strong> ! Observez le résultat qui a du sens en français.",
-        2: "🚨 <strong>Solution directe (0 pt) :</strong> Le décalage exact est la <strong>Clé 03</strong>. Le message secret déchiffré à copier-coller dans la validation est : <code>42_MACHINE_A_SOUS</code>"
+        2: "🚨 <strong>Solution de l'épreuve (0 pt) :</strong> Complétez le script <code>decrypt.py</code> aux lignes indiquées avec :<br><code>position = (ord(lettre) - ord('A') - decalage) % 26</code><br><code>lettre_decalee = chr(position + ord('A'))</code><br>Enregistrez et lancez <code>python3 decrypt.py</code> : repérez la ligne <strong>Clé 03</strong> dans votre terminal, le message lisible en français commençant par <code>42_...</code> est votre mot de passe !"
     },
     4: {
         1: "💡 <strong>Indice 1 (-50 pts) :</strong> Pour tester si au moins 2 symboles sont identiques, écrivez :<br><code>elif r1 == r2 or r1 == r3 or r2 == r3:</code><br>Affichez scrupuleusement <code>print(\"JACKPOT\")</code> (+50 crédits) pour 3 identiques, <code>print(\"PAIRE\")</code> (+15 crédits) pour 2 identiques, et <code>print(\"PERDU\")</code> sinon. Lancez ensuite <code>python3 moulinette.py</code>.",
-        2: "🚨 <strong>Solution directe (0 pt) :</strong> Complétez <code>slot_machine.py</code> avec :<br><pre style=\"margin:6px 0; background:#f1f5f9; padding:8px; border-radius:4px; font-family:monospace;\">if r1 == r2 and r2 == r3:\n    print(\"JACKPOT\")\n    credits += 50\nelif r1 == r2 or r1 == r3 or r2 == r3:\n    print(\"PAIRE\")\n    credits += 15\nelse:\n    print(\"PERDU\")</pre>Lancez <code>python3 moulinette.py</code> : la clé secrète délivrée est <code>CASINO-42-JACKPOT</code>."
+        2: "🚨 <strong>Solution de l'épreuve (0 pt) :</strong> Insérez ce bloc de code exact dans <code>slot_machine.py</code> sous le commentaire à compléter :<br><pre style=\"margin:6px 0; background:#f1f5f9; padding:8px; border-radius:4px; font-family:monospace;\">if r1 == r2 and r2 == r3:\n    print(\"JACKPOT\")\n    credits += 50\nelif r1 == r2 or r1 == r3 or r2 == r3:\n    print(\"PAIRE\")\n    credits += 15\nelse:\n    print(\"PERDU\")</pre>Enregistrez le fichier, puis exécutez dans votre terminal :<br><code>python3 moulinette.py</code><br>La Moulinette 42 validera votre machine et vous affichera le code secret de l'Étoile 4 !"
     },
     5: {
         1: "💡 <strong>Indice 1 (-50 pts) :</strong> Trouvez un binôme bloqué dans la salle. Posez-leur des questions guidées pour les aider à raisonner (règle d'or de 42 : <em>ne touchez jamais à leur clavier ni à leur souris !</em>). Dès que c'est fait, appelez un animateur.",
-        2: "🚨 <strong>Solution directe (0 pt) :</strong> Levez la main pour signaler votre binôme à l'animateur / Mentor 42. C'est lui qui viendra saisir son mot de passe confidentiel : <code>MENTOR42</code>"
+        2: "🚨 <strong>Solution de l'épreuve (0 pt) :</strong> Allez aider une équipe bloquée dans la salle en lui expliquant la démarche sans toucher à son poste. Une fois son étape validée grâce à vos explications, levez la main pour appeler un Mentor 42 : décrivez-lui brièvement ce que vous avez expliqué, et le mentor viendra lui-même déverrouiller votre écran !"
     }
 }
 
@@ -74,38 +74,53 @@ def get_mission_dir():
         return desktop
     return bureau
 
+def get_template_file(filename):
+    """Recherche la source du script (dossier templates utilisateur ou dossier du repo)."""
+    # 1. Dossier sécurisé hors du bureau : ~/.local/share/42_mission_templates
+    user_storage = os.path.expanduser(f"~/.local/share/42_mission_templates/{filename}")
+    if os.path.exists(user_storage):
+        return user_storage
+    # 2. Dossier du dépôt local (TPT)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_file = os.path.join(script_dir, filename)
+    if os.path.exists(repo_file):
+        return repo_file
+    return None
+
 def unlock_mission_file(level):
-    """Copie dynamiquement le script requis dans mission_42."""
+    """Copie dynamiquement les scripts requis dans mission_42."""
     target_dir = get_mission_dir()
     os.makedirs(target_dir, exist_ok=True)
-    script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    filename = None
+    files_to_unlock = []
     if level == 2:
-        filename = "decrypt.py"
+        files_to_unlock = ["decrypt.py"]
     elif level == 3:
-        filename = "slot_machine.py"
-
-    if not filename:
+        files_to_unlock = ["slot_machine.py", "moulinette.py"]
+    else:
         return False, "Niveau non pris en charge."
 
-    src = os.path.join(script_dir, filename)
-    if not os.path.exists(src):
-        tmpl_src = os.path.join(target_dir, ".templates", filename)
-        if os.path.exists(tmpl_src):
-            src = tmpl_src
+    unlocked = []
+    for filename in files_to_unlock:
+        src = get_template_file(filename)
+        if src and os.path.exists(src):
+            dst = os.path.join(target_dir, filename)
+            shutil.copyfile(src, dst)
+            if filename == "moulinette.py":
+                try:
+                    os.chmod(dst, 0o755)
+                except Exception:
+                    pass
+            unlocked.append(filename)
 
-    if not os.path.exists(src):
-        return False, f"Source introuvable pour {filename}."
-
-    dst = os.path.join(target_dir, filename)
-    shutil.copyfile(src, dst)
-    return True, f"{filename} débloqué dans {target_dir}."
+    if unlocked:
+        return True, f"Fichiers débloqués dans {target_dir} : {', '.join(unlocked)}"
+    return False, f"Impossible de trouver les fichiers sources pour le niveau {level}."
 
 def reset_mission_files():
-    """Supprime decrypt.py et slot_machine.py du dossier mission_42."""
+    """Supprime decrypt.py, slot_machine.py et moulinette.py du dossier mission_42."""
     target_dir = get_mission_dir()
-    for filename in ("decrypt.py", "slot_machine.py"):
+    for filename in ("decrypt.py", "slot_machine.py", "moulinette.py"):
         p = os.path.join(target_dir, filename)
         if os.path.exists(p):
             try:
@@ -428,6 +443,9 @@ class WorkshopHTTPHandler(SimpleHTTPRequestHandler):
             return
         if path == "/download/slot_machine.py":
             self.serve_download_file("slot_machine.py")
+            return
+        if path == "/download/moulinette.py":
+            self.serve_download_file("moulinette.py")
             return
 
         # 7. Fichiers statiques normaux (index.html, station.html, css, png...)

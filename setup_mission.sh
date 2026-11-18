@@ -152,16 +152,19 @@ SetEnv MISSION_KEY "BASH-EXPLORER-42"
 EOF
 
 # ------------------------------------------------------------------------------
-# 5. INITIALISATION DYNAMIQUE DES SCRIPTS
-# (decrypt.py et slot_machine.py n'apparaissent qu'après validation de leur niveau)
+# 5. STOCKAGE ISOLÉ DES SCRIPTS DE DÉVERROUILLAGE
+# (Stockés en dehors du dossier mission_42 dans ~/.local/share/42_mission_templates
+# pour être 100% invisibles lors de l'exploration de l'Exercice 1)
 # ------------------------------------------------------------------------------
-mkdir -p "$DEST_DIR/.templates"
-cp "$SCRIPT_DIR/decrypt.py" "$DEST_DIR/.templates/"
-cp "$SCRIPT_DIR/slot_machine.py" "$DEST_DIR/.templates/"
+STORAGE_DIR="$HOME/.local/share/42_mission_templates"
+rm -rf "$STORAGE_DIR"
+mkdir -p "$STORAGE_DIR"
 
-# Seule la moulinette d'évaluation est présente initialement
-cp "$SCRIPT_DIR/moulinette.py" "$DEST_DIR/"
-chmod +x "$DEST_DIR/moulinette.py"
+cp "$SCRIPT_DIR/decrypt.py" "$STORAGE_DIR/"
+cp "$SCRIPT_DIR/slot_machine.py" "$STORAGE_DIR/"
+cp "$SCRIPT_DIR/moulinette.py" "$STORAGE_DIR/"
+chmod +x "$STORAGE_DIR/moulinette.py"
 
 echo "✅ Dossier mission_42 généré avec succès dans $DEST_DIR !"
-echo "ℹ️  decrypt.py et slot_machine.py sont prêts et apparaîtront dynamiquement."
+echo "🔒 Templates des scripts stockés de manière isolée dans $STORAGE_DIR."
+echo "ℹ️  decrypt.py, slot_machine.py et moulinette.py apparaîtront au moment opportun."

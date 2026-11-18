@@ -144,11 +144,14 @@ message_secret = <span class="code-highlight">"42_PDFKLQH_D_VRXV"</span>
 
 # NIVEAU 4 : Machine à sous (Consignes strictes d'affichage pour la Moulinette)
 lvl4_html = """<div id="unlock-alert-slot" class="rules-callout" style="border-left-color: #10b981; background: #ecfdf5; margin-bottom: 20px;">
-    <strong style="color: #047857;">🔓 Fichier débloqué dans votre terminal :</strong>
+    <strong style="color: #047857;">🔓 Fichiers débloqués dans votre terminal :</strong>
     <p style="margin: 6px 0 10px 0; color: #065f46; font-size: 0.92rem;">
-        Le script Python à trous <code class="inline">slot_machine.py</code> vient d'apparaître sur votre Bureau dans le dossier <code class="inline">mission_42/</code> !
+        Les scripts <code class="inline">slot_machine.py</code> et <code class="inline">moulinette.py</code> viennent d'apparaître sur votre Bureau dans le dossier <code class="inline">mission_42/</code> !
     </p>
-    <a href="/download/slot_machine.py" download class="action-link-btn" style="background: #059669; font-size: 0.85rem; padding: 6px 14px;">📥 Télécharger slot_machine.py (si distant)</a>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/download/slot_machine.py" download class="action-link-btn" style="background: #059669; font-size: 0.85rem; padding: 6px 14px;">📥 Télécharger slot_machine.py</a>
+        <a href="/download/moulinette.py" download class="action-link-btn" style="background: #059669; font-size: 0.85rem; padding: 6px 14px;">📥 Télécharger moulinette.py</a>
+    </div>
 </div>
 
 <p class="desc">Vous avez débloqué le jeu <code class="inline">slot_machine.py</code> ! Votre objectif est de programmer les <strong>conditions de gains</strong> (instructions <code class="inline">if / elif / else</code>) pour faire fonctionner la machine.</p>
@@ -2113,7 +2116,7 @@ html_template = f"""<!DOCTYPE html>
                 awardLevelScore(3);
                 saveSession();
                 fetch('/api/unlock?level=3').catch(() => {{}});
-                showFeedback(3, true, `Message déchiffré avec succès ! (+${{sessionData.earnedScores[3]}} pts) — slot_machine.py débloqué & Niveau 4 accessible !`);
+                showFeedback(3, true, `Message déchiffré avec succès ! (+${{sessionData.earnedScores[3]}} pts) — slot_machine.py & moulinette.py débloqués !`);
                 playAudioTone(659.25, 0.2);
                 renderLevel(4, decryptedHtml);
                 markLevelCompleted(3);
