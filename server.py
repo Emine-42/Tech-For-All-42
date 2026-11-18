@@ -2,32 +2,33 @@
 # -*- coding: utf-8 -*-
 """
 ==============================================================================
-42 | SERVEUR WEB CENTRALISÉ D'ATELIER & CONTRÔLE ADMIN
+42 | SERVEUR WEB CENTRALISÉ D'ATELIER & CONTRÔLE ADMIN (MULTITHREADÉ)
 ==============================================================================
 Ce serveur héberge le sujet pour toute la salle et permet à l'organisateur
 (et UNIQUEMENT à lui) de basculer le mode pour tout le monde :
-  - Mode Lycée (Intermédiaire) : Zéro indice, esprit 42 pur.
-  - Mode Collège (Facile)      : Indices progressifs (-50 pts puis 0 pt).
+  - Mode Lycée (Intermédiaire) : Zéro indice, autonomie & peer-learning pur 42.
+  - Mode Collège (Facile)      : Indices progressifs équilibrés (-50 pts puis 0 pt).
 
 L'organisateur peut changer le mode :
   1. En direct depuis son terminal en tapant 'm' + Entrée
   2. Depuis son navigateur sur http://localhost:8000/ (bouton ⚙️ Admin)
   3. Depuis le tableau de bord dédié http://localhost:8000/admin
 
-Usage :
-    python3 server.py [PORT] [--easy | --intermediate]
-Exemple :
-    python3 server.py 8000
+Architecture :
+  - ThreadingHTTPServer : gestion multithreadée fluide de toutes les requêtes
+  - Déverrouillage dynamique de decrypt.py (Niveau 2) et slot_machine.py (Niveau 3)
+  - Suppression automatique des fichiers lors de la réinitialisation
 ==============================================================================
 """
 
 import sys
 import os
+import shutil
 import json
 import socket
 import threading
 from urllib.parse import urlparse, parse_qs
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 # ------------------------------------------------------------------------------
 # CONFIGURATION GLOBALE DU SERVEUR
@@ -37,29 +38,81 @@ DEFAULT_MODE = "intermediate"  # "intermediate" (Lycée) ou "easy" (Collège)
 current_mode = DEFAULT_MODE
 mode_lock = threading.Lock()
 
-# Banque d'indices confidentielle (réservée au serveur, invisible dans index.html)
+# Banque d'indices équilibrée (réservée au serveur, invisible côté client)
+# - Indice 1 (-50 pts) : Multiplie par 2 les chances sans donner la réponse directe.
+# - Indice 2 (0 pt)    : 100% de chances de réussir (solution/code direct).
 SERVER_HINTS = {
     1: {
-        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Sous Linux, les fichiers système commencent souvent par un point <code>.</code> pour être masqués. Dans votre Boîte à Outils, repérez quelle commande permet de lister TOUS les fichiers (y compris cachés). Fouillez dans les sous-dossiers de <code>archives</code> !",
-        2: "🚨 <strong>Solution directe (0 pt) :</strong> Le fichier se nomme <code>.htaccess</code> et se trouve dans <code>archives/2023/configs/</code>. Affichez-le avec : <code>cat archives/2023/configs/.htaccess</code> pour copier la clé."
+        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Concentrez vos recherches dans le dossier <code>archives/2023/configs/</code> ! Sous Linux, les fichiers cachés commencent par un point <code>.</code>. Utilisez la commande <code>ls -la</code> pour révéler les fichiers masqués, puis affichez leur contenu avec <code>cat</code>.",
+        2: "🚨 <strong>Solution directe (0 pt) :</strong> Le fichier secret est <code>.htaccess</code> situé dans <code>archives/2023/configs/</code>. Affichez-le avec la commande :<br><code>cat archives/2023/configs/.htaccess</code><br>La clé secrète à copier-coller est : <code>BASH-EXPLORER-42</code>"
     },
     2: {
-        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Ouvrez la page <code class=\"inline\">station.html</code>, appuyez sur <kbd>F12</kbd> pour afficher l'Inspecteur d'éléments, puis inspectez les champs à l'intérieur de la balise <code>&lt;form&gt;</code>.",
-        2: "🚨 <strong>Solution directe (0 pt) :</strong> Le jeton est dissimulé dans le champ caché <code>&lt;input type=\"hidden\" id=\"auth_token\" value=\"WEB-INSPECTOR-42\"&gt;</code>."
+        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Ne cherchez pas dans les commentaires ou balises secondaires : inspectez directement le formulaire <code>&lt;form id=\"login-form\"&gt;</code> ! Un champ masqué <code>&lt;input type=\"hidden\"&gt;</code> nommé <code>auth_token</code> y est dissimulé.",
+        2: "🚨 <strong>Solution directe (0 pt) :</strong> Dans l'Inspecteur d'éléments (<kbd>F12</kbd>), développez <code>&lt;form id=\"login-form\"&gt;</code>. Le champ masqué contient <code>value=\"WEB-INSPECTOR-42\"</code>. La clé secrète à copier-coller est : <code>WEB-INSPECTOR-42</code>"
     },
     3: {
-        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Pour reculer de 'decalage' crans dans l'alphabet (modulo 26) : <code>position = (ord(lettre) - ord('A') - decalage) % 26</code> puis <code>lettre_decalee = chr(position + ord('A'))</code>.",
-        2: "🚨 <strong>Solution directe (0 pt) :</strong> Le bon décalage est la Clé 03. Le message secret déchiffré à entrer est : <code>42_MACHINE_A_SOUS</code>"
+        1: "💡 <strong>Indice 1 (-50 pts) :</strong> La formule Python pour reculer d'un décalage dans l'alphabet est :<br><code>pos = (ord(lettre) - ord('A') - decalage) % 26</code> puis <code>chr(pos + ord('A'))</code>.<br>De plus, la bonne clé est comprise entre <strong>1 et 5</strong> ! Observez le résultat qui a du sens en français.",
+        2: "🚨 <strong>Solution directe (0 pt) :</strong> Le décalage exact est la <strong>Clé 03</strong>. Le message secret déchiffré à copier-coller dans la validation est : <code>42_MACHINE_A_SOUS</code>"
     },
     4: {
-        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Pour tester si au moins 2 symboles sont identiques, utilisez <code>or</code> : <code>elif r1 == r2 or r1 == r3 or r2 == r3:</code>. Respectez scrupuleusement la casse des mots <code>JACKPOT</code>, <code>PAIRE</code> et <code>PERDU</code>.",
-        2: "🚨 <strong>Solution directe (0 pt) :</strong> 3 identiques : <code>print(\"JACKPOT\")</code> et <code>credits += 50</code>. Au moins 2 identiques : <code>print(\"PAIRE\")</code> et <code>credits += 15</code>. Sinon : <code>print(\"PERDU\")</code>. Puis lancez <code>python3 moulinette.py</code>."
+        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Pour tester si au moins 2 symboles sont identiques, écrivez :<br><code>elif r1 == r2 or r1 == r3 or r2 == r3:</code><br>Affichez scrupuleusement <code>print(\"JACKPOT\")</code> (+50 crédits) pour 3 identiques, <code>print(\"PAIRE\")</code> (+15 crédits) pour 2 identiques, et <code>print(\"PERDU\")</code> sinon. Lancez ensuite <code>python3 moulinette.py</code>.",
+        2: "🚨 <strong>Solution directe (0 pt) :</strong> Complétez <code>slot_machine.py</code> avec :<br><pre style=\"margin:6px 0; background:#f1f5f9; padding:8px; border-radius:4px; font-family:monospace;\">if r1 == r2 and r2 == r3:\n    print(\"JACKPOT\")\n    credits += 50\nelif r1 == r2 or r1 == r3 or r2 == r3:\n    print(\"PAIRE\")\n    credits += 15\nelse:\n    print(\"PERDU\")</pre>Lancez <code>python3 moulinette.py</code> : la clé secrète délivrée est <code>CASINO-42-JACKPOT</code>."
     },
     5: {
-        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Trouvez un binôme bloqué dans la salle. Posez-leur des questions pour les débloquer SANS JAMAIS toucher à leur clavier ou souris !",
-        2: "🚨 <strong>Solution directe (0 pt) :</strong> Une fois votre entraide effectuée, levez la main dans la salle pour appeler un Mentor 42. C'est lui qui viendra saisir son mot de passe confidentiel."
+        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Trouvez un binôme bloqué dans la salle. Posez-leur des questions guidées pour les aider à raisonner (règle d'or de 42 : <em>ne touchez jamais à leur clavier ni à leur souris !</em>). Dès que c'est fait, appelez un animateur.",
+        2: "🚨 <strong>Solution directe (0 pt) :</strong> Levez la main pour signaler votre binôme à l'animateur / Mentor 42. C'est lui qui viendra saisir son mot de passe confidentiel : <code>MENTOR42</code>"
     }
 }
+
+def get_mission_dir():
+    """Détermine le dossier de mission sur le bureau de l'étudiant."""
+    bureau = os.path.expanduser("~/Bureau/mission_42")
+    if os.path.exists(bureau):
+        return bureau
+    desktop = os.path.expanduser("~/Desktop/mission_42")
+    if os.path.exists(desktop):
+        return desktop
+    return bureau
+
+def unlock_mission_file(level):
+    """Copie dynamiquement le script requis dans mission_42."""
+    target_dir = get_mission_dir()
+    os.makedirs(target_dir, exist_ok=True)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    filename = None
+    if level == 2:
+        filename = "decrypt.py"
+    elif level == 3:
+        filename = "slot_machine.py"
+
+    if not filename:
+        return False, "Niveau non pris en charge."
+
+    src = os.path.join(script_dir, filename)
+    if not os.path.exists(src):
+        tmpl_src = os.path.join(target_dir, ".templates", filename)
+        if os.path.exists(tmpl_src):
+            src = tmpl_src
+
+    if not os.path.exists(src):
+        return False, f"Source introuvable pour {filename}."
+
+    dst = os.path.join(target_dir, filename)
+    shutil.copyfile(src, dst)
+    return True, f"{filename} débloqué dans {target_dir}."
+
+def reset_mission_files():
+    """Supprime decrypt.py et slot_machine.py du dossier mission_42."""
+    target_dir = get_mission_dir()
+    for filename in ("decrypt.py", "slot_machine.py"):
+        p = os.path.join(target_dir, filename)
+        if os.path.exists(p):
+            try:
+                os.remove(p)
+            except Exception:
+                pass
+    return True
 
 def get_lan_ip():
     """Détecte l'adresse IP locale sur le réseau de la salle."""
@@ -255,9 +308,11 @@ ADMIN_HTML = """<!DOCTYPE html>
 """
 
 # ------------------------------------------------------------------------------
-# GESTIONNAIRE DE REQUÊTES HTTP SÉCURISÉ
+# GESTIONNAIRE DE REQUÊTES HTTP SÉCURISÉ & MULTITHREADÉ
 # ------------------------------------------------------------------------------
 class WorkshopHTTPHandler(SimpleHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+    timeout = 5
 
     def is_admin_authorized(self):
         """Vérifie si la requête provient de la machine locale ou porte le jeton secret."""
@@ -278,8 +333,29 @@ class WorkshopHTTPHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Connection", "close")
         self.end_headers()
         self.wfile.write(payload)
+
+    def serve_download_file(self, filename):
+        """Sert un script Python en téléchargement direct."""
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(script_dir, filename)
+        if not os.path.exists(path):
+            self.send_json(404, {"error": "Fichier introuvable."})
+            return
+        try:
+            with open(path, "rb") as f:
+                content = f.read()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/x-python; charset=utf-8")
+            self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
+            self.send_header("Content-Length", str(len(content)))
+            self.send_header("Connection", "close")
+            self.end_headers()
+            self.wfile.write(content)
+        except Exception as e:
+            self.send_json(500, {"error": str(e)})
 
     def do_GET(self):
         parsed = urlparse(self.path)
@@ -300,13 +376,13 @@ class WorkshopHTTPHandler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(admin_bytes)))
+            self.send_header("Connection", "close")
             self.end_headers()
             self.wfile.write(admin_bytes)
             return
 
         # 3. API d'Indices Sécurisée (/api/hint?level=X&step=Y)
         if path == "/api/hint":
-            # Si le mode est Intermédiaire (Lycée), les indices sont formellement bloqués
             if get_current_mode() == "intermediate":
                 self.send_json(403, {
                     "error": "Les indices sont désactivés pour cet atelier (Mode Lycée / Esprit 42)."
@@ -326,8 +402,39 @@ class WorkshopHTTPHandler(SimpleHTTPRequestHandler):
                 self.send_json(400, {"error": "Paramètres invalides."})
             return
 
-        # 4. Fichiers statiques normaux (index.html, station.html, css, png...)
+        # 4. API de Déverrouillage Local de Fichier (/api/unlock?level=2|3)
+        if path == "/api/unlock":
+            qs = parse_qs(parsed.query)
+            try:
+                lvl = int(qs.get("level", [0])[0])
+                ok, msg = unlock_mission_file(lvl)
+                if ok:
+                    self.send_json(200, {"status": "ok", "message": msg, "level": lvl})
+                else:
+                    self.send_json(400, {"status": "error", "message": msg})
+            except Exception as e:
+                self.send_json(500, {"status": "error", "message": str(e)})
+            return
+
+        # 5. API de Réinitialisation (/api/reset)
+        if path == "/api/reset":
+            reset_mission_files()
+            self.send_json(200, {"status": "ok", "message": "Fichiers débloqués réinitialisés."})
+            return
+
+        # 6. Téléchargement direct des scripts (fallback utile pour machines distantes)
+        if path == "/download/decrypt.py":
+            self.serve_download_file("decrypt.py")
+            return
+        if path == "/download/slot_machine.py":
+            self.serve_download_file("slot_machine.py")
+            return
+
+        # 7. Fichiers statiques normaux (index.html, station.html, css, png...)
         return super().do_GET()
+
+    def do_HEAD(self):
+        self.do_GET()
 
     def do_POST(self):
         parsed = urlparse(self.path)
@@ -354,12 +461,34 @@ class WorkshopHTTPHandler(SimpleHTTPRequestHandler):
                 self.send_json(500, {"error": str(e)})
             return
 
+        # Déverrouillage via POST
+        if path == "/api/unlock":
+            try:
+                content_len = int(self.headers.get("Content-Length", 0))
+                body = self.rfile.read(content_len).decode("utf-8") if content_len > 0 else "{}"
+                data = json.loads(body)
+                lvl = int(data.get("level", 0))
+                ok, msg = unlock_mission_file(lvl)
+                if ok:
+                    self.send_json(200, {"status": "ok", "message": msg, "level": lvl})
+                else:
+                    self.send_json(400, {"status": "error", "message": msg})
+            except Exception as e:
+                self.send_json(500, {"status": "error", "message": str(e)})
+            return
+
+        # Réinitialisation via POST
+        if path == "/api/reset":
+            reset_mission_files()
+            self.send_json(200, {"status": "ok", "message": "Fichiers débloqués réinitialisés."})
+            return
+
         self.send_response(404)
         self.end_headers()
 
     def log_message(self, format, *args):
         # Filtre les requêtes de polling périodique pour garder le terminal propre
-        if len(args) > 0 and any(p in str(args[0]) for p in ("/api/status", "favicon")):
+        if len(args) > 0 and any(p in str(args[0]) for p in ("/api/status", "favicon", "/api/unlock")):
             return
         super().log_message(format, *args)
 
@@ -413,14 +542,15 @@ def main():
     lan_ip = get_lan_ip()
 
     server_address = ("0.0.0.0", port)
-    httpd = HTTPServer(server_address, WorkshopHTTPHandler)
+    httpd = ThreadingHTTPServer(server_address, WorkshopHTTPHandler)
+    httpd.daemon_threads = True
     httpd.lan_ip = lan_ip
     httpd.server_port = port
 
     mode_label = "🎒 COLLÈGE (Facile)" if current_mode == "easy" else "🎓 LYCÉE (Intermédiaire)"
 
     print("\n" + "=" * 75)
-    print("  🚀 SERVEUR DE L'ATELIER 42 EN LIGNE !")
+    print("  🚀 SERVEUR DE L'ATELIER 42 EN LIGNE (MULTITHREADÉ) !")
     print("=" * 75)
     print(f"\n  📡 Lien à donner aux ÉLÈVES dans la salle :")
     print(f"\n     👉  http://{lan_ip}:{port}/\n")

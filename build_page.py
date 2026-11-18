@@ -47,6 +47,7 @@ lvl2_html = """<p class="desc">Le premier code a déverrouillé l'accès à la <
     <li>Cliquez sur le lien ci-dessus pour ouvrir la page <code class="inline">station.html</code>.</li>
     <li>Appuyez sur <code class="inline">F12</code> (ou clic droit &gt; <em>Inspecter</em>) pour explorer la page.</li>
     <li><strong>Masque de la clé recherchée :</strong> <code class="inline" style="letter-spacing: 2px; font-weight: 700; color: #b91c1c;">W***-INS*****-*2</code></li>
+    <li><em>Attention aux pièges :</em> plusieurs clés leurres au même format sont dissimulées sur la page. Seul le jeton d'autorisation officiel placé dans le formulaire de connexion est valide.</li>
     <li>Une fois la clé identifiée, copiez-la et collez-la ci-dessous pour valider l'Étoile 2 !</li>
 </ul>
 
@@ -72,7 +73,15 @@ lvl2_html = """<p class="desc">Le premier code a déverrouillé l'accès à la <
 </div>"""
 
 # NIVEAU 3 : Cryptanalyse César (Saisie directe du message en clair, pas de moulinette)
-lvl3_html = """<p class="desc">Le message récupéré a été chiffré par un <strong>Chiffre de César</strong> (décalage de lettres dans l'alphabet). Votre mission : compléter le script Python à trous <code class="inline">decrypt.py</code> pour tester les 26 décalages possibles et trouver le lien en clair.</p>
+lvl3_html = """<div id="unlock-alert-decrypt" class="rules-callout" style="border-left-color: #10b981; background: #ecfdf5; margin-bottom: 20px;">
+    <strong style="color: #047857;">🔓 Fichier débloqué dans votre terminal :</strong>
+    <p style="margin: 6px 0 10px 0; color: #065f46; font-size: 0.92rem;">
+        Le script Python à trous <code class="inline">decrypt.py</code> vient d'apparaître sur votre Bureau dans le dossier <code class="inline">mission_42/</code> !
+    </p>
+    <a href="/download/decrypt.py" download class="action-link-btn" style="background: #059669; font-size: 0.85rem; padding: 6px 14px;">📥 Télécharger decrypt.py (si distant)</a>
+</div>
+
+<p class="desc">Le message récupéré a été chiffré par un <strong>Chiffre de César</strong> (décalage de lettres dans l'alphabet). Votre mission : compléter le script Python à trous <code class="inline">decrypt.py</code> pour tester les 26 décalages possibles et trouver le lien en clair.</p>
 
 <div class="code-container">
     <div class="code-header">
@@ -134,7 +143,15 @@ message_secret = <span class="code-highlight">"42_PDFKLQH_D_VRXV"</span>
 </div>"""
 
 # NIVEAU 4 : Machine à sous (Consignes strictes d'affichage pour la Moulinette)
-lvl4_html = """<p class="desc">Vous avez débloqué le jeu <code class="inline">slot_machine.py</code> ! Votre objectif est de programmer les <strong>conditions de gains</strong> (instructions <code class="inline">if / elif / else</code>) pour faire fonctionner la machine.</p>
+lvl4_html = """<div id="unlock-alert-slot" class="rules-callout" style="border-left-color: #10b981; background: #ecfdf5; margin-bottom: 20px;">
+    <strong style="color: #047857;">🔓 Fichier débloqué dans votre terminal :</strong>
+    <p style="margin: 6px 0 10px 0; color: #065f46; font-size: 0.92rem;">
+        Le script Python à trous <code class="inline">slot_machine.py</code> vient d'apparaître sur votre Bureau dans le dossier <code class="inline">mission_42/</code> !
+    </p>
+    <a href="/download/slot_machine.py" download class="action-link-btn" style="background: #059669; font-size: 0.85rem; padding: 6px 14px;">📥 Télécharger slot_machine.py (si distant)</a>
+</div>
+
+<p class="desc">Vous avez débloqué le jeu <code class="inline">slot_machine.py</code> ! Votre objectif est de programmer les <strong>conditions de gains</strong> (instructions <code class="inline">if / elif / else</code>) pour faire fonctionner la machine.</p>
 
 <div class="rules-callout" style="border-left-color: #f59e0b; background: #fffdf5;">
     <strong style="color: #b45309;">🎯 Cahier des charges STRICT (Obligatoire pour la Moulinette) :</strong>
@@ -247,7 +264,7 @@ lvl5_html = """<p class="desc"><strong>À 42, on ne réussit jamais seul.</stron
         <span class="validation-title">👑 Zone Réservée au Mentor 42</span>
         <span class="mentor-tag">Validation Physique</span>
     </div>
-    <p class="validation-hint" style="color: #92400e;">Le mentor vient vérifier votre entraide sur place et saisit son mot de passe secret pour vous attribuer la 5ème étoile dorée :</p>
+    <p class="validation-hint" style="color: #92400e;">Le mentor vient vérifier votre entraide sur place et saisit son mot de passe secret pour vous attribuer la 5ème Étoile :</p>
     <div class="validation-form">
         <input type="password" class="validation-input" id="input-level-5" placeholder="Mot de passe confidentiel du Mentor..." autocomplete="off">
         <button class="validate-btn mentor-btn" onclick="validateLevel5()">Valider la 5ème Étoile ⭐⭐⭐⭐⭐</button>
@@ -1512,7 +1529,7 @@ html_template = f"""<!DOCTYPE html>
         <!-- Footer -->
         <footer class="site-footer">
             <div>
-                <strong>ÉCOLE 42</strong> — Atelier d'immersion Pédagogique (Ubuntu 24 — 2 Heures)
+                <strong>ÉCOLE 42</strong> — La Tech Pour Toutes — Édition Novembre 2026
             </div>
             <div>
                 <button class="reset-btn" onclick="confirmResetProgress()">🔄 Réinitialiser la progression</button>
@@ -1851,8 +1868,11 @@ html_template = f"""<!DOCTYPE html>
             restoreAllUnlocked();
         }}
 
-        function confirmResetProgress() {{
+        async function confirmResetProgress() {{
             if (confirm("Réinitialiser toute votre progression et score à zéro ?")) {{
+                try {{
+                    await fetch('/api/reset');
+                }} catch (e) {{}}
                 localStorage.removeItem('42_session_v2');
                 location.reload();
             }}
@@ -1874,8 +1894,9 @@ html_template = f"""<!DOCTYPE html>
                 }}
             }}
 
-            // Niveau 3
+            // Niveau 3 (decrypt.py débloqué)
             if (sessionData.keys.level3) {{
+                fetch('/api/unlock?level=2').catch(() => {{}});
                 const html3 = decryptPayload(ENCRYPTED_PAYLOADS.level3, sessionData.keys.level3);
                 if (html3) {{
                     renderLevel(3, html3);
@@ -1885,8 +1906,9 @@ html_template = f"""<!DOCTYPE html>
                 }}
             }}
 
-            // Niveau 4
+            // Niveau 4 (slot_machine.py débloqué)
             if (sessionData.keys.level4) {{
+                fetch('/api/unlock?level=3').catch(() => {{}});
                 const html4 = decryptPayload(ENCRYPTED_PAYLOADS.level4, sessionData.keys.level4);
                 if (html4) {{
                     renderLevel(4, html4);
@@ -2059,14 +2081,15 @@ html_template = f"""<!DOCTYPE html>
                 sessionData.keys.level3 = input;
                 awardLevelScore(2);
                 saveSession();
-                showFeedback(2, true, `Jeton secret validé ! (+${{sessionData.earnedScores[2]}} pts) — Niveau 3 déchiffré !`);
+                fetch('/api/unlock?level=2').catch(() => {{}});
+                showFeedback(2, true, `Jeton secret validé ! (+${{sessionData.earnedScores[2]}} pts) — decrypt.py débloqué & Niveau 3 accessible !`);
                 playAudioTone(587.33, 0.2);
                 renderLevel(3, decryptedHtml);
                 markLevelCompleted(2);
                 updateProgressUI(3);
                 scrollToCard('card-level-3');
             }} else {{
-                showFeedback(2, false, "Jeton incorrect. Inspectez attentivement la page station.html pour trouver la clé au format W***-INS*****-*2.");
+                showFeedback(2, false, "Jeton incorrect. Inspectez attentivement le formulaire de station.html pour trouver la clé au format W***-INS*****-*2.");
                 playAudioTone(220, 0.3, 'sawtooth');
             }}
         }}
@@ -2089,7 +2112,8 @@ html_template = f"""<!DOCTYPE html>
                 sessionData.keys.level4 = input;
                 awardLevelScore(3);
                 saveSession();
-                showFeedback(3, true, `Message déchiffré avec succès ! (+${{sessionData.earnedScores[3]}} pts) — Niveau 4 déverrouillé !`);
+                fetch('/api/unlock?level=3').catch(() => {{}});
+                showFeedback(3, true, `Message déchiffré avec succès ! (+${{sessionData.earnedScores[3]}} pts) — slot_machine.py débloqué & Niveau 4 accessible !`);
                 playAudioTone(659.25, 0.2);
                 renderLevel(4, decryptedHtml);
                 markLevelCompleted(3);
@@ -2141,7 +2165,7 @@ html_template = f"""<!DOCTYPE html>
                 sessionData.keys.victory = input;
                 awardLevelScore(5);
                 saveSession();
-                showFeedback(5, true, `Authentification Mentor réussie ! (+${{sessionData.earnedScores[5]}} pts) — 5ème Étoile dorée !`);
+                showFeedback(5, true, `Authentification Mentor réussie ! (+${{sessionData.earnedScores[5]}} pts) — 5ème Étoile !`);
                 playVictoryFanfare();
                 markLevelCompleted(5);
                 updateProgressUI(6);

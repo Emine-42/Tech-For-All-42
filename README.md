@@ -9,27 +9,29 @@
 Vous organisez l'atelier dans une salle ? Voici comment tout lancer en **3 étapes chrono** :
 
 ### Étape 1 : Préparer les postes des élèves
-Sur chaque machine élève (ou via un script de déploiement de salle / clone de session) :
+Sur chaque machine élève (ou via un script de déploiement de salle / image système clone) :
 ```bash
 git clone git@github.com:Emine-42/Tech-For-All-42.git
 cd Tech-For-All-42
 ./setup_mission.sh
 ```
-*(Cela crée automatiquement le dossier `~/Bureau/mission_42` sur le bureau de l'élève avec l'arborescence d'archives, les leurres et les scripts de départ).*
+*(Cela crée automatiquement le dossier `~/Bureau/mission_42` sur le bureau avec l'arborescence complète d'archives, les anecdotes historiques 42, les leurres et la moulinette).*
+
+> 💡 **Apparition dynamique des scripts** : Initialement, `decrypt.py` et `slot_machine.py` ne sont **pas** visibles. `decrypt.py` apparaît automatiquement dès que le Niveau 2 est validé, et `slot_machine.py` apparaît dès que le Niveau 3 est validé !
 
 ### Étape 2 : Lancer le serveur sur la machine de l'animateur
 Sur votre poste organisateur (connecté au même réseau local Wi-Fi ou Ethernet que les élèves) :
 ```bash
 python3 server.py 8000
 ```
-Le terminal détecte automatiquement votre IP locale et affiche :
+Le serveur multithreadé détecte automatiquement votre IP locale et affiche :
 ```text
 ===========================================================================
-  🚀 SERVEUR DE L'ATELIER 42 EN LIGNE !
+  🚀 SERVEUR DE L'ATELIER 42 EN LIGNE (MULTITHREADÉ) !
 ===========================================================================
 
   📡 Lien à donner aux ÉLÈVES dans la salle :
-     👉  http://10.80.213.152:8000/
+     👉  http://10.80.212.27:8000/
 
   🛡️ Panneau Organisateur (Admin) :
      👉  http://localhost:8000/admin
@@ -40,7 +42,7 @@ Le terminal détecte automatiquement votre IP locale et affiche :
 ```
 
 ### Étape 3 : Donner le lien aux élèves
-Les élèves ouvrent simplement leur navigateur web (Chrome ou Firefox) et se rendent sur l'adresse IP affichée (ex: `http://10.80.213.152:8000/`). **L'atelier commence !**
+Les élèves ouvrent simplement leur navigateur web (Chrome ou Firefox) et se rendent sur l'adresse IP affichée (ex: `http://10.80.212.27:8000/`). **L'atelier commence !**
 
 ---
 
@@ -51,14 +53,14 @@ Le serveur central contrôle le niveau d'accompagnement pour **toute la salle en
 | Mode | Public Cible | Caractéristiques |
 | :--- | :--- | :--- |
 | **🎓 Mode Lycée (Intermédiaire)**<br>*(Par défaut)* | Lycéens (STD, Général, Pro) | **Esprit 42 pur** : Aucun bouton d'indice. Les élèves doivent s'entraider entre pairs et chercher par eux-mêmes. Pas de notion de score, focus sur les 5 étoiles et le chrono. |
-| **🎒 Mode Collège (Facile)** | Collégiens / Débutants complets | **Accompagné** : Système d'indices progressifs (Indice 1 : `-50 pts`, Indice 2 / Solution : `0 pt`) et jauge de score sur 500 points. |
+| **🎒 Mode Collège (Facile)** | Collégiens / Débutants complets | **Accompagné & Équilibré** :<br>• **Indice 1 (-50 pts)** : Double les chances sans donner la réponse directe (chemin exact, syntaxe, élimination des leurres).<br>• **Indice 2 (0 pt)** : 100% de chances de réussir (solution/code direct).<br>Jauge de score globale sur 500 points. |
 
 ### 3 façons de changer le mode pour toute la salle :
 1. **Dans le terminal de l'animateur** : Tapez simplement `m` puis `Entrée` dans la console de `server.py`.
 2. **Sur votre navigateur hôte ([http://localhost:8000/](http://localhost:8000/))** : Un bouton **`⚙️ Admin`** apparaît dans l'en-tête (visible uniquement sur votre machine).
 3. **Sur le tableau de bord web** : Rendez-vous sur [http://localhost:8000/admin](http://localhost:8000/admin).
 
-> 💡 **Mise à jour instantanée** : Dès que vous changez le mode, tous les écrans des élèves dans la salle basculent automatiquement sous 3 secondes.
+> ⚡ **Mise à jour instantanée et sans blocage** : Le serveur utilise `ThreadingHTTPServer`. Le passage en Mode Collège ou Lycée s'effectue en temps réel sans ralentissement ni freeze de page.
 
 ---
 
@@ -68,10 +70,10 @@ Ce tableau récapitule les 5 étoiles de la mission, où se trouvent les solutio
 
 | Étoile | Thématique | Ce que fait l'élève | Clé Secrète à Valider | Où elle se trouve |
 | :---: | :--- | :--- | :--- | :--- |
-| **⭐ 1** | **Terminal Linux & Bash** | Navigue dans le dossier `mission_42/archives/` avec `ls -la` et `cd` pour trouver le fichier d'accès système caché. | `BASH-EXPLORER-42` | Dans `mission_42/archives/2023/configs/.htaccess` (affiché avec `cat`). |
-| **⭐⭐ 2** | **Inspection Web (DevTools)** | Ouvre la page web `station.html` débloquée et utilise l'inspecteur d'éléments (`F12`) pour trouver le jeton au format `W***-INS*****-*2`. | `WEB-INSPECTOR-42` | Dans le champ caché `<input type="hidden" id="auth_token">` du formulaire de `station.html`. |
-| **⭐⭐⭐ 3** | **Cryptanalyse Python** | Complète le script à trous `decrypt.py` pour tester par force brute les 26 décalages d'un Chiffre de César. | `42_MACHINE_A_SOUS` | Résultat de la **Clé 03** affiché dans le terminal de l'élève en exécutant `python3 decrypt.py`. |
-| **⭐⭐⭐⭐ 4** | **Logique & Moulinette** | Implémente les conditions `if / elif / else` de `slot_machine.py` et fait certifier son code par la Moulinette 42 officielle. | `CASINO-42-JACKPOT` | Code délivré dans le terminal par la commande `python3 moulinette.py` lorsque le jeu est fonctionnel. |
+| **⭐ 1** | **Terminal Linux & Bash** | Navigue dans le dossier `mission_42/archives/` avec `ls -la` et `cd` pour trouver le fichier d'accès système caché parmi les 25 faux fichiers et anecdotes 42. | `BASH-EXPLORER-42` | Dans `mission_42/archives/2023/configs/.htaccess` (affiché avec `cat`). |
+| **⭐⭐ 2** | **Inspection Web (DevTools)** | Ouvre la page web `station.html` débloquée et utilise l'inspecteur d'éléments (`F12`) pour trouver le jeton au format `W***-INS*****-*2` sans tomber dans les clés leurres. | `WEB-INSPECTOR-42` | Dans le champ caché `<input type="hidden" id="auth_token">` du formulaire de `station.html`. |
+| **⭐⭐⭐ 3** | **Cryptanalyse Python** | Complète le script à trous `decrypt.py` (qui vient d'apparaître) pour tester par force brute les 26 décalages d'un Chiffre de César. | `42_MACHINE_A_SOUS` | Résultat de la **Clé 03** affiché dans le terminal de l'élève en exécutant `python3 decrypt.py`. |
+| **⭐⭐⭐⭐ 4** | **Logique & Moulinette** | Implémente les conditions `if / elif / else` de `slot_machine.py` (qui vient d'apparaître) et fait certifier son code par la Moulinette 42 officielle. | `CASINO-42-JACKPOT` | Code délivré dans le terminal par la commande `python3 moulinette.py` lorsque le jeu est fonctionnel. |
 | **⭐⭐⭐⭐⭐ 5** | **Peer-Learning & Mentor** | Aide une autre équipe bloquée dans la salle **sans jamais toucher à leur clavier**, puis appelle un mentor. | `MENTOR42` | **Mot de passe physique** que le Mentor tape en personne sur le poste de l'élève après avoir validé l'entraide. |
 
 ---
@@ -87,7 +89,6 @@ Ce tableau récapitule les 5 étoiles de la mission, où se trouvent les solutio
    ```text
    MENTOR42
    ```
-   *(ou `PEER42`)*
 5. L'écran de victoire finale s'affiche avec fanfare 8-bit et lancer de confettis ! 🏆
 
 ---
@@ -96,13 +97,13 @@ Ce tableau récapitule les 5 étoiles de la mission, où se trouvent les solutio
 
 ```text
 Tech-For-All-42/
-├── server.py              # Serveur web centralisé Python (avec API statut, hints et panneau /admin)
+├── server.py              # Serveur multithreadé centralisé (API statut, déblocage dynamique, hints, /admin)
 ├── build_page.py          # Générateur Zero-Knowledge (chiffre les niveaux et compile index.html)
-├── setup_mission.sh       # Script préparant le dossier mission_42 sur le bureau des élèves
-├── index.html             # Sujet web principal (Thème clair, autonome, offline, fonts 42 incluses)
-├── station.html           # Page cible d'inspection web du Niveau 2
-├── decrypt.py             # Script starter de déchiffrement César (Niveau 3)
-├── slot_machine.py        # Script starter de machine à sous (Niveau 4)
+├── setup_mission.sh       # Script préparant mission_42 (arborescence enrichie, anecdotes, templates)
+├── index.html             # Sujet web principal (Thème clair, offline, fonts 42 officielles)
+├── station.html           # Page cible d'inspection web du Niveau 2 (leurres + jeton officiel)
+├── decrypt.py             # Script starter de déchiffrement César (débloqué au Niveau 2)
+├── slot_machine.py        # Script starter de machine à sous (débloqué au Niveau 3)
 ├── moulinette.py          # Outil de certification CLI officiel pour la machine à sous
 ├── payloads.json          # Données chiffrées des niveaux (SHA256-CTR)
 ├── fonts/                 # Typographies officielles 42 (Futura-PT, JetBrains Mono)
@@ -115,7 +116,8 @@ Tech-For-All-42/
 
 * **Impossible de tricher via l'Inspecteur (`F12`)** : Les niveaux verrouillés sont chiffrés avec un algorithme de flux basé sur SHA256. Le contenu HTML des niveaux 2, 3, 4 et 5 n'existe tout simplement pas dans le navigateur de l'élève tant que la clé exacte n'a pas été saisie.
 * **Aucune clé dans les placeholders ou commentaires** : Les champs de saisie utilisent des placeholders génériques et le JavaScript ne contient aucune liste de réponses en clair.
-* **Indices protégés côté serveur** : En mode Lycée, le serveur refuse de délivrer les indices (`403 Forbidden`).
+* **Indices protégés côté serveur** : En mode Lycée, le serveur refuse catégoriquement de délivrer les indices (`403 Forbidden`).
+* **Déblocage dynamique synchronisé** : Les fichiers `decrypt.py` et `slot_machine.py` ne polluent pas le bureau dès le départ et ne sont injectés que lors de la validation effective. En cas de réinitialisation, ils sont nettoyés automatiquement.
 
 ---
 
@@ -130,7 +132,7 @@ Tech-For-All-42/
 3. Testez l'accessibilité avec un simple `ping <IP_HÔTE>` depuis un poste élève.
 
 ### Un élève veut réinitialiser sa progression
-Un bouton discret **`↺ Recommencer la mission`** est présent dans le pied de page du sujet web. Il vide le `localStorage` et recharge l'épreuve à zéro.
+Un bouton discret **`↺ Recommencer la mission`** est présent dans le pied de page du sujet web. Il réinitialise le `localStorage`, envoie une requête de nettoyage des fichiers au serveur (`/api/reset`), et recharge l'épreuve à zéro.
 
 ### Modifier un texte ou recompiler la page web
 Si vous modifiez les textes ou les clés dans `build_page.py`, recompilez la page avec :

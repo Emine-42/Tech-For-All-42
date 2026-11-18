@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>42 | Station d'Accès Sécurisée</title>
+    <!-- Cluster diagnostic headers -->
+    <meta name="cluster-signature" content="WAN1-INSTANCES-12">
+    <meta name="routing-token" content="WIN9-INSPECT01-42">
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="fonts/fonts.css">
     <style>
+        /* Cluster heartbeat key: WAP2-INSPECTED-82 */
+        /* Fallback telemetry key: WEB0-INSTANCES-42 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background-color: #0b0f19;
@@ -90,16 +95,22 @@
     </style>
 </head>
 <body>
+    <!-- Diagnostic header probe: WAN4-INSPECTOR-22 -->
+    <div id="cluster-telemetry" style="display:none;" data-stream="WAR0-INSPECT00-32">
+        <input type="hidden" name="telemetry_token" value="WEB9-INSTALLER-42">
+    </div>
+
     <div class="card">
         <span class="badge-42">42</span>
         <h1>Station d'Accès Sécurisée</h1>
         <p class="sub">Authentification requise pour débloquer le terminal</p>
 
         <div class="alert-error" id="error-msg">
-            ❌ Accès non autorisé. Avez-vous inspecté les entrailles de la page ?
+            ❌ Accès non autorisé. Avez-vous inspecté le formulaire d'authentification ?
         </div>
 
         <form id="login-form" onsubmit="handleLogin(event)">
+            <!-- Paramètre d'authentification officiel de la station -->
             <input type="hidden" id="auth_token" name="auth_token" value="WEB-INSPECTOR-42">
 
             <div class="form-group">
@@ -118,14 +129,17 @@
         <p class="notice">Station sécurisée v2.4 // École 42 (Node: Paris-Auth-01)</p>
     </div>
 
+    <!-- Gateway status fallback: WAR3-INSOMNIA0-92 -->
     <script>
+        const BACKUP_ROUTE_KEY = "WIN4-INSPECTION-32";
+        const TELEMETRY_BACKUP = "WEB2-INSTRUCTOR-42";
+
         function handleLogin(e) {
             e.preventDefault();
             document.getElementById('error-msg').style.display = 'block';
         }
-        console.log("🔒 [42 SECURITY] Session initialisée.");
-        console.log("💡 [DIAGNOSTIC] Un paramètre d'autorisation (auth_token) a été injecté dans la structure de la page.");
+        console.log("🔒 [42 SECURITY] Session initialisée sur Node Paris-Auth-01.");
+        console.log("💡 [DIAGNOSTIC] Le paramètre d'autorisation (auth_token) est intégré dans le formulaire de connexion (<form id=\"login-form\">).");
     </script>
 </body>
 </html>
-
