@@ -240,17 +240,8 @@ lvl5_html = """<p class="desc"><strong>À 42, on ne réussit jamais seul.</stron
         <li>Repérez une autre équipe dans la salle qui est encore bloquée aux Niveaux 1, 2 ou 3.</li>
         <li><strong>RÈGLE ABSOLUE : Interdiction formelle de toucher à leur clavier ou à leur souris !</strong></li>
         <li>Posez-leur des questions pour les aider à trouver la solution par eux-mêmes (<em>"Que dit le terminal ?", "Avez-vous bien exploré l'arborescence ?"</em>).</li>
-        <li>Dès que l'autre équipe a franchi son étape grâce à vos explications, <strong>levez la main pour appeler un Mentor 42</strong> !</li>
+        <li>Dès que l'autre équipe a franchi son étape grâce à vos explications, <strong>levez la main pour appeler un Mentor 42</strong></li>
     </ul>
-</div>
-
-<!-- WIDGET D'INDICE (MODE COLLÈGE / LYCÉE) -->
-<div class="hint-widget" id="hint-widget-5">
-    <div class="hint-header">
-        <button class="hint-btn" id="hint-btn-5" onclick="requestHint(5)">💡 Demander un indice (-50 pts)</button>
-        <span class="hint-points-status" id="hint-pts-5">Valeur : 100 / 100 pts</span>
-    </div>
-    <div class="hint-box" id="hint-box-5" style="display: none;"></div>
 </div>
 
 <div class="validation-box mentor-box">
@@ -1917,7 +1908,6 @@ html_template = f"""<!DOCTYPE html>
                     renderLevel(5, html5);
                     markLevelCompleted(4);
                     currentLevel = 5;
-                    restoreHintUI(5);
                 }}
             }}
 

@@ -57,10 +57,6 @@ SERVER_HINTS = {
     4: {
         1: "💡 <strong>Indice 1 (-50 pts) :</strong> Dans <code>slot_machine.py</code>, remplacez les <code>...</code> par les trois cas de figure :<br>• <strong>CAS 1 (Jackpot)</strong> : <code>if r1 == r2 and r2 == r3:</code> (mot requis : <code>\"JACKPOT\"</code>, gain : <code>+50</code>)<br>• <strong>CAS 2 (Paire)</strong> : <code>elif r1 == r2 or r1 == r3 or r2 == r3:</code> (mot requis : <code>\"PAIRE\"</code>, gain : <code>+15</code>)<br>• <strong>CAS 3 (Perdu)</strong> : <code>else:</code> (mot requis : <code>\"PERDU\"</code>, aucun gain)<br>Lancez ensuite <code>python3 moulinette.py</code>.",
         2: "🚨 <strong>Solution de l'épreuve (0 pt) :</strong> Remplacez les <code>...</code> dans <code>slot_machine.py</code> par ce bloc exact :<br><pre style=\"margin:6px 0; background:#f1f5f9; padding:8px; border-radius:4px; font-family:monospace;\">    # CAS 1 : 3 symboles identiques (Jackpot !)\n    if r1 == r2 and r2 == r3:\n        print(\"JACKPOT\")\n        credits += 50\n    # CAS 2 : Au moins 2 symboles identiques (Paire)\n    elif r1 == r2 or r1 == r3 or r2 == r3:\n        print(\"PAIRE\")\n        credits += 15\n    # CAS 3 : Aucun symbole identique (Perdu)\n    else:\n        print(\"PERDU\")</pre>Enregistrez le fichier, puis exécutez dans votre terminal :<br><code>python3 moulinette.py</code><br>La Moulinette 42 validera votre machine et vous affichera le code secret de l'Étoile 4 !"
-    },
-    5: {
-        1: "💡 <strong>Indice 1 (-50 pts) :</strong> Trouvez un binôme bloqué dans la salle. Posez-leur des questions guidées pour les aider à raisonner (règle d'or de 42 : <em>ne touchez jamais à leur clavier ni à leur souris !</em>). Dès que c'est fait, appelez un animateur.",
-        2: "🚨 <strong>Solution de l'épreuve (0 pt) :</strong> Allez aider une équipe bloquée dans la salle en lui expliquant la démarche sans toucher à son poste. Une fois son étape validée grâce à vos explications, levez la main pour appeler un Mentor 42 : décrivez-lui brièvement ce que vous avez expliqué, et le mentor viendra lui-même déverrouiller votre écran !"
     }
 }
 
