@@ -27,6 +27,7 @@ import shutil
 import json
 import socket
 import threading
+import time
 from urllib.parse import urlparse, parse_qs
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
@@ -37,6 +38,17 @@ ADMIN_SECRET_TOKEN = "42admin"
 DEFAULT_MODE = "intermediate"  # "intermediate" (Lycée) ou "easy" (Collège)
 current_mode = DEFAULT_MODE
 mode_lock = threading.Lock()
+timer_epoch = int(time.time())
+
+def get_timer_epoch():
+    with mode_lock:
+        return timer_epoch
+
+def reset_timer_epoch():
+    global timer_epoch
+    with mode_lock:
+        timer_epoch = int(time.time())
+        return timer_epoch
 
 # Banque d'indices équilibrée (réservée au serveur, invisible côté client)
 # - Indice 1 (-50 pts) : Multiplie par 2 les chances sans donner la réponse directe.
@@ -258,6 +270,13 @@ ADMIN_HTML = """<!DOCTYPE html>
                     <small>Indices progressifs activés (-50 pts puis 0 pt) et score visible sur 500 pts.</small>
                 </div>
             </button>
+            <button class="btn-choice" onclick="resetRoomTimer()" style="border-color: #f59e0b;">
+                <span class="icon">⏱️</span>
+                <div class="text">
+                    <strong>Relancer le Chronomètre (60 min)</strong>
+                    <small>Synchronise et remet le chrono à 60:00 pour tous les postes élèves.</small>
+                </div>
+            </button>
         </div>
 
         <div class="server-links">
@@ -308,6 +327,22 @@ ADMIN_HTML = """<!DOCTYPE html>
                 }
             } catch(e) {
                 alert("Erreur de connexion.");
+            }
+        }
+
+        async function resetRoomTimer() {
+            if (confirm("Relancer le compte à rebours de 60 minutes pour toute la salle ?")) {
+                try {
+                    const res = await fetch('/api/timer/reset', { method: 'POST' });
+                    const data = await res.json();
+                    if (data.status === 'ok') {
+                        alert("⏱️ Chronomètre relancé à 60:00 pour toute la salle !");
+                    } else {
+                        alert(data.error || "Action refusée.");
+                    }
+                } catch(e) {
+                    alert("Erreur de connexion.");
+                }
             }
         }
 
@@ -377,8 +412,19 @@ class WorkshopHTTPHandler(SimpleHTTPRequestHandler):
             self.send_json(200, {
                 "mode": get_current_mode(),
                 "lan_ip": getattr(self.server, "lan_ip", "localhost"),
-                "port": getattr(self.server, "server_port", 8000)
+                "port": getattr(self.server, "server_port", 8000),
+                "timer_epoch": get_timer_epoch()
             })
+            return
+
+        # Relance du chrono centralisé (GET ou POST)
+        if path == "/api/timer/reset":
+            if not self.is_admin_authorized():
+                self.send_json(403, {"error": "Seul l'administrateur peut relancer le chronomètre."})
+                return
+            new_epoch = reset_timer_epoch()
+            print("\n📢 [ADMIN] Chronomètre de 60 minutes relancé pour TOUTE la salle !\n>>> ", end="", flush=True)
+            self.send_json(200, {"status": "ok", "timer_epoch": new_epoch})
             return
 
         # 2. Panneau d'Administration Organisateur (/admin)
@@ -491,6 +537,16 @@ class WorkshopHTTPHandler(SimpleHTTPRequestHandler):
                 self.send_json(500, {"status": "error", "message": str(e)})
             return
 
+        # Relance du chrono via POST
+        if path == "/api/timer/reset":
+            if not self.is_admin_authorized():
+                self.send_json(403, {"error": "Seul l'administrateur peut relancer le chronomètre."})
+                return
+            new_epoch = reset_timer_epoch()
+            print("\n📢 [ADMIN] Chronomètre de 60 minutes relancé pour TOUTE la salle !\n>>> ", end="", flush=True)
+            self.send_json(200, {"status": "ok", "timer_epoch": new_epoch})
+            return
+
         # Réinitialisation via POST
         if path == "/api/reset":
             reset_mission_files()
@@ -520,12 +576,15 @@ def console_listener():
             if cmd in ("m", "mode", "switch"):
                 new_m = "easy" if get_current_mode() == "intermediate" else "intermediate"
                 set_current_mode(new_m)
+            elif cmd in ("t", "timer", "chrono"):
+                reset_timer_epoch()
+                print("\n📢 [ADMIN] Chronomètre de 60 minutes relancé pour TOUTE la salle !\n>>> ", end="", flush=True)
             elif cmd in ("status", "info"):
                 m = get_current_mode()
                 label = "🎒 Collège (Facile avec indices)" if m == "easy" else "🎓 Lycée (Intermédiaire pur 42)"
                 print(f"[INFO] Mode d'atelier actuel : {label}\n>>> ", end="", flush=True)
             elif cmd in ("h", "help", "?"):
-                print("Commandes disponibles :\n  'm'      : Basculer entre Collège et Lycée\n  'status' : Afficher le mode actif\n  'q'      : Quitter\n>>> ", end="", flush=True)
+                print("Commandes disponibles :\n  'm'      : Basculer entre Collège et Lycée\n  't'      : Relancer le chrono (60 min)\n  'status' : Afficher le mode actif\n  'q'      : Quitter\n>>> ", end="", flush=True)
             elif cmd in ("q", "quit", "exit"):
                 print("\nArrêt du serveur demandé.")
                 os._exit(0)

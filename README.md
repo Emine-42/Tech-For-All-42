@@ -1,6 +1,6 @@
 # 🚀 42 Tech For All — Chasse au Trésor & Atelier Peer-Learning
 
-> **Atelier d'initiation immersif de 1h30 à 2h** conçu pour faire vivre la pédagogie unique de l'**École 42** à des lycéens (ou collégiens) : autonomie totale, apprentissage par la pratique et entraide *peer-to-peer* (sans professeurs ni cours magistraux).
+> **Atelier d'initiation immersif d'une heure (60 minutes)** conçu pour faire vivre la pédagogie unique de l'**École 42** à des lycéens (ou collégiens) : autonomie totale, apprentissage par la pratique et entraide *peer-to-peer* (sans professeurs ni cours magistraux).
 
 ---
 

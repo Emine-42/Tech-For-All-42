@@ -1535,6 +1535,16 @@
                     if (data.mode && data.mode !== sessionData.difficultyMode) {
                         applyDifficultyModeUI(data.mode);
                     }
+                    if (data.timer_epoch) {
+                        const lastEpoch = localStorage.getItem('42_last_timer_epoch');
+                        if (!lastEpoch) {
+                            localStorage.setItem('42_last_timer_epoch', String(data.timer_epoch));
+                        } else if (lastEpoch !== String(data.timer_epoch)) {
+                            localStorage.setItem('42_last_timer_epoch', String(data.timer_epoch));
+                            localStorage.setItem(TIMER_STORAGE_KEY, (Date.now() + (DEFAULT_DURATION_SEC * 1000)).toString());
+                            startTimer();
+                        }
+                    }
                 }
             } catch (e) {}
         }
@@ -1909,50 +1919,52 @@
             }
         }
 
-        // Chronomètre 60 minutes
-        let timeLeft = 60 * 60;
-        let timerInterval = null;
-        let isRunning = false;
+        // Chronomètre 60 minutes (décorrélé de la réinitialisation de progression)
+        const TIMER_STORAGE_KEY = '42_workshop_timer_end';
+        const DEFAULT_DURATION_SEC = 60 * 60; // 60 minutes
 
-        function updateTimerDisplay() {
-            const mins = Math.floor(timeLeft / 60);
-            const secs = timeLeft % 60;
-            document.getElementById('timer-display').innerText = 
-                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        function getRemainingSeconds() {
+            let endTime = localStorage.getItem(TIMER_STORAGE_KEY);
+            if (!endTime) {
+                endTime = Date.now() + (DEFAULT_DURATION_SEC * 1000);
+                localStorage.setItem(TIMER_STORAGE_KEY, endTime.toString());
+            }
+            const remaining = Math.max(0, Math.floor((parseInt(endTime, 10) - Date.now()) / 1000));
+            return remaining;
         }
 
-        function toggleTimer() {
-            const btn = document.getElementById('timer-toggle-btn');
-            if (isRunning) {
-                clearInterval(timerInterval);
-                isRunning = false;
-                if (btn) btn.innerText = '▶';
-            } else {
-                timerInterval = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateTimerDisplay();
-                    } else {
-                        clearInterval(timerInterval);
-                        isRunning = false;
-                        if (btn) btn.innerText = '▶';
-                        alert("⏱️ Fin des 60 minutes ! Rassemblement pour le débrief !");
-                    }
-                }, 1000);
-                isRunning = true;
-                if (btn) btn.innerText = '⏸';
+        let timerInterval = null;
+
+        function updateTimerDisplay(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            const el = document.getElementById('timer-display');
+            if (el) {
+                el.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             }
         }
 
         function startTimer() {
-            updateTimerDisplay();
-            toggleTimer();
+            updateTimerDisplay(getRemainingSeconds());
+
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                const rem = getRemainingSeconds();
+                updateTimerDisplay(rem);
+                if (rem <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    alert("⏱️ Fin des 60 minutes ! Rassemblement pour le débrief !");
+                }
+            }, 1000);
         }
 
-        function resetTimer() {
-            timeLeft = 60 * 60;
-            updateTimerDisplay();
-        }
+        // Fonction globale si un animateur souhaite explicitement remettre le chrono à 60:00
+        window.resetWorkshopTimer = function() {
+            localStorage.setItem(TIMER_STORAGE_KEY, (Date.now() + (DEFAULT_DURATION_SEC * 1000)).toString());
+            startTimer();
+        };
 
         // Audio synthétisé
         function playAudioTone(freq, duration, type = 'sine') {
