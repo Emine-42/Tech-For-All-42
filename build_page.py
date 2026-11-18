@@ -1305,8 +1305,6 @@ html_template = f"""<!DOCTYPE html>
                 <div class="timer-box" title="Temps restant pour l'activité">
                     <span>⏱️</span>
                     <span id="timer-display">60:00</span>
-                    <button class="timer-btn" id="timer-toggle-btn" onclick="toggleTimer()">▶</button>
-                    <button class="timer-btn" onclick="resetTimer()">↺</button>
                 </div>
 
                 <!-- Étoiles débloquées -->
@@ -2221,7 +2219,7 @@ html_template = f"""<!DOCTYPE html>
             if (isRunning) {{
                 clearInterval(timerInterval);
                 isRunning = false;
-                btn.innerText = '▶';
+                if (btn) btn.innerText = '▶';
             }} else {{
                 timerInterval = setInterval(() => {{
                     if (timeLeft > 0) {{
@@ -2230,12 +2228,12 @@ html_template = f"""<!DOCTYPE html>
                     }} else {{
                         clearInterval(timerInterval);
                         isRunning = false;
-                        btn.innerText = '▶';
+                        if (btn) btn.innerText = '▶';
                         alert("⏱️ Fin des 60 minutes ! Rassemblement pour le débrief !");
                     }}
                 }}, 1000);
                 isRunning = true;
-                btn.innerText = '⏸';
+                if (btn) btn.innerText = '⏸';
             }}
         }}
 
